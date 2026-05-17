@@ -1,5 +1,12 @@
 # MicroCam BenchScope
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![PySide6](https://img.shields.io/badge/GUI-PySide6-green)
+![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-red)
+![FFmpeg](https://img.shields.io/badge/Recording-FFmpeg-purple)
+![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 Linux HDMI microscope and USB capture-card inspection workstation for electronics repair, PCB analysis, solder inspection, OCR, measurements, focus stacking, HDR fusion, and recording.
 
 Designed primarily for:
