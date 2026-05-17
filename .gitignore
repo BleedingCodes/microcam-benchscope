@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+
+# Qt / runtime
+*.log
+
+# Capture outputs
+captures/
+*.mp4
+*.png
+*.jpg
+*.jpeg
+*.avi
+
+# Reports
+reports/
+
+# Configs
+*_config.json
+
+# Linux junk
+*.swp
+*.swo
+*~
+
+# VSCode
+.vscode/
+
+# JetBrains
+.idea/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
