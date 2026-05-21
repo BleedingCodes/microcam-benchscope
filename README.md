@@ -30,9 +30,9 @@ SCREENSHOTS
 
 MAIN UI
 
-![microcam_hyperlab_ffmpeg UI](screenshots/ui/microcam_hyperlab_ffmpeg_image_menu_tab)
+![microcam_hyperlab_ffmpeg UI](screenshots/ui/microcam_hyperlab_ffmpeg_image_menu_tab.png)
 
-![microcam_hyperlab_pyav UI](screenshots/ui/microcam_hyperlab_pyav_image_menu_tab)
+![microcam_hyperlab_pyav UI](screenshots/ui/microcam_hyperlab_pyav_image_menu_tab.png)
 
 --------------------------------------------------------
 FEATURES
