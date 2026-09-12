@@ -22,12 +22,12 @@ python3 microcam_benchscope_pro.py
 
 import os
 import sys
+import html as html_mod
 import cv2
 import json
 import time
 import math
 import glob
-import queue
 import shutil
 import subprocess
 import threading
@@ -159,6 +159,12 @@ def load_config() -> None:
                 setattr(config, key, value)
     except Exception as exc:
         print(f"Config load failed: {exc}")
+
+    # Guard against a saved zero that would cause divide-by-zero in all
+    # measurement and ruler calculations.
+    if config.pixels_per_mm <= 0:
+        print("WARNING: pixels_per_mm was <= 0 in saved config; reset to default 100.0")
+        config.pixels_per_mm = 100.0
 
 
 def save_config() -> None:
@@ -377,7 +383,9 @@ class CameraWorker(QObject):
         self.running = False
 
         if self.thread and self.thread.is_alive():
-            self.thread.join(timeout=1.0)
+            # Timeout must exceed the longest possible sleep in _loop.
+            # At fps=1 the loop sleeps up to 1 s, so 3 s gives safe margin.
+            self.thread.join(timeout=3.0)
 
         self.thread = None
 
@@ -494,6 +502,18 @@ class FFmpegRecorder:
         with self.lock:
             if not self.active or self.proc is None or self.proc.stdin is None:
                 return
+
+            # If the frame dimensions changed mid-recording (e.g. user restarted
+            # the camera at a different resolution), resize to match what ffmpeg
+            # was started with rather than feeding it unexpected bytes.
+            if self.size is not None:
+                expected_w, expected_h = self.size
+                if frame.shape[1] != expected_w or frame.shape[0] != expected_h:
+                    frame = cv2.resize(
+                        frame,
+                        (expected_w, expected_h),
+                        interpolation=cv2.INTER_AREA,
+                    )
 
             try:
                 self.proc.stdin.write(frame.tobytes())
@@ -1593,14 +1613,14 @@ class MainWindow(QMainWindow):
             f"<p>Generated: {datetime.now()}</p>",
             "<h2>Configuration</h2>",
             "<pre>",
-            json.dumps(asdict(config), indent=2),
+            html_mod.escape(json.dumps(asdict(config), indent=2)),
             "</pre>",
             "<h2>Latest Analysis</h2>",
             "<ul>",
         ]
 
         for key, value in self.last_analysis.items():
-            html.append(f"<li><b>{key}</b>: {value}</li>")
+            html.append(f"<li><b>{html_mod.escape(str(key))}</b>: {html_mod.escape(str(value))}</li>")
 
         html += [
             "</ul>",
@@ -1609,8 +1629,8 @@ class MainWindow(QMainWindow):
         ]
 
         for img in snapshots:
-            rel = os.path.relpath(img, REPORT_DIR)
-            html.append(f"<div class='card'><img src='{rel}'><p>{img.name}</p></div>")
+            rel = img.relative_to(REPORT_DIR.parent)
+            html.append(f"<div class='card'><img src='../{rel}'><p>{img.name}</p></div>")
 
         html += [
             "</div>",
@@ -1619,8 +1639,8 @@ class MainWindow(QMainWindow):
         ]
 
         for img in analysis_images:
-            rel = os.path.relpath(img, REPORT_DIR)
-            html.append(f"<div class='card'><img src='{rel}'><p>{img.name}</p></div>")
+            rel = img.relative_to(REPORT_DIR.parent)
+            html.append(f"<div class='card'><img src='../{rel}'><p>{img.name}</p></div>")
 
         html += [
             "</div>",
@@ -1629,8 +1649,8 @@ class MainWindow(QMainWindow):
         ]
 
         for vid in videos:
-            rel = os.path.relpath(vid, REPORT_DIR)
-            html.append(f"<li><a href='{rel}'>{vid.name}</a></li>")
+            rel = vid.relative_to(REPORT_DIR.parent)
+            html.append(f"<li><a href='../{rel}'>{vid.name}</a></li>")
 
         html += [
             "</ul>",
