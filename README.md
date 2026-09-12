@@ -208,6 +208,8 @@ NOTES
 
 This project is intentionally practical and repair-bench focused.
 
+## Documentation : [microcam-benchscope-sop](https://github.com/MR-MainbyteLabs/technical-docs-portfolio/blob/main/microcam-benchscope-sop.md)
+
 It prioritizes:
 - realtime usability
 - low-latency inspection
@@ -216,4 +218,4 @@ It prioritizes:
 - single-file experimentation
 - practical electronics workflows
 
-- ## Documentation : [microcam-benchscope-sop](https://github.com/MR-MainbyteLabs/technical-docs-portfolio/blob/main/microcam-benchscope-sop.md)
+  
