@@ -44,7 +44,7 @@ INSTALL FFMPEG EDITION
 pip install -r requirements-ffmpeg.txt
 
 Run:
-python3 modern/microcam_benchscope_ffmpeg.py
+python3 modern/microcam_hyperlab_ffmpeg.py
 
 --------------------------------------------------------
 INSTALL PYAV EDITION
@@ -53,7 +53,7 @@ INSTALL PYAV EDITION
 pip install -r requirements-pyav.txt
 
 Run:
-python3 modern/microcam_benchscope_pyav.py
+python3 modern/microcam_hyperlab_pyav.py
 
 --------------------------------------------------------
 VERIFY VIDEO DEVICES
