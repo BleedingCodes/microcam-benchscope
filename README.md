@@ -1,7 +1,7 @@
-> **Status: Work in Progress**
-> This project is functional but currently undergoing bug fixes and refactoring.
-> Feature additions caused instability. A stable release is in progress.
-> Use at your own risk — contributions and issue reports welcome.
+> **Status: Beta**
+> Core bugs fixed. Modern editions (FFmpeg and PyAV) are stable for bench use.
+> Legacy versions in `/legacy` are preserved as development history — not for production use.
+> Contributions and issue reports welcome.
 
 # MicroCam BenchScope
 
@@ -79,7 +79,6 @@ CAPTURE TOOLS
 - MP4 recording
 - Focus stacking
 - HDR fusion
-- Panorama stitching
 - HTML report generation
 
 --------------------------------------------------------
@@ -115,7 +114,7 @@ sudo apt install ffmpeg v4l-utils tesseract-ocr
 pip install -r requirements-ffmpeg.txt
 
 Run:
-python3 modern/microcam_benchscope_ffmpeg.py
+python3 modern/microcam_hyperlab_ffmpeg.py
 
 --------------------------------------------------------
 
@@ -132,7 +131,7 @@ sudo apt install v4l-utils tesseract-ocr
 pip install -r requirements-pyav.txt
 
 Run:
-python3 modern/microcam_benchscope_pyav.py
+python3 modern/microcam_hyperlab_pyav.py
 
 --------------------------------------------------------
 LEGACY VERSIONS
@@ -186,7 +185,7 @@ R
 Record
 
 SPACE
-Pause
+Pause (PyAV edition only)
 
 L
 Lock measurement
