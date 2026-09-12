@@ -1,3 +1,8 @@
+> **Status: Work in Progress**
+> This project is functional but currently undergoing bug fixes and refactoring.
+> Feature additions caused instability. A stable release is in progress.
+> Use at your own risk — contributions and issue reports welcome.
+
 # MicroCam BenchScope
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
