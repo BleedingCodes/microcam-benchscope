@@ -3,3 +3,6 @@ opencv-python
 numpy
 pytesseract
 av
+# Optional: install opencv-contrib-python instead of opencv-python
+# for additional algorithms (SIFT, SURF, etc.)
+# pip install opencv-contrib-python
