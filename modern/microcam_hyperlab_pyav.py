@@ -25,6 +25,7 @@ python3 microcam_benchscope_pyav.py
 """
 
 import sys
+import html as html_mod
 import cv2
 import json
 import time
@@ -164,6 +165,12 @@ def load_config() -> None:
 
     except Exception as exc:
         print(f"Config load failed: {exc}")
+
+    # Guard against a saved zero that would cause divide-by-zero in all
+    # measurement and ruler calculations.
+    if config.pixels_per_mm <= 0:
+        print("WARNING: pixels_per_mm was <= 0 in saved config; reset to default 100.0")
+        config.pixels_per_mm = 100.0
 
 
 def save_config() -> None:
@@ -420,7 +427,9 @@ class CameraWorker(QObject):
         self.running = False
 
         if self.thread and self.thread.is_alive():
-            self.thread.join(timeout=1.0)
+            # Timeout must exceed the longest possible sleep in _loop.
+            # At fps=1 the loop sleeps up to 1 s, so 3 s gives safe margin.
+            self.thread.join(timeout=3.0)
 
         self.thread = None
 
@@ -538,8 +547,12 @@ class PyAVRecorder:
             self.dropped_frames += 1
 
     def stop(self) -> Optional[Path]:
+        # Capture the path immediately so a second call still returns it
+        # even after self.file has been cleared by the first call.
+        out = self.file
+
         if not self.running:
-            return self.file
+            return out
 
         self.running = False
 
@@ -552,10 +565,9 @@ class PyAVRecorder:
         if self.thread and self.thread.is_alive():
             self.thread.join(timeout=8.0)
 
-        out = self.file
-
         self.thread = None
         self.frame_queue = None
+        self.file = None
 
         return out
 
@@ -566,22 +578,30 @@ class PyAVRecorder:
         try:
             container = av.open(str(self.file), mode="w")
 
+            codec_used = config.record_codec
             try:
-                stream = container.add_stream(config.record_codec, rate=self.fps)
+                stream = container.add_stream(codec_used, rate=self.fps)
             except Exception:
-                stream = container.add_stream("mpeg4", rate=self.fps)
+                codec_used = "mpeg4"
+                stream = container.add_stream(codec_used, rate=self.fps)
+                self.error = (
+                    f"Codec '{config.record_codec}' unavailable in this PyAV build; "
+                    f"fell back to mpeg4. CRF/preset options not applied."
+                )
 
             stream.width = self.width
             stream.height = self.height
             stream.pix_fmt = "yuv420p"
 
-            try:
-                stream.options = {
-                    "crf": str(config.record_crf),
-                    "preset": str(config.record_preset),
-                }
-            except Exception:
-                pass
+            # CRF and preset are libx264-specific; skip for mpeg4 fallback.
+            if codec_used == "libx264":
+                try:
+                    stream.options = {
+                        "crf": str(config.record_crf),
+                        "preset": str(config.record_preset),
+                    }
+                except Exception:
+                    pass
 
             while True:
                 if self.frame_queue is None:
@@ -1217,6 +1237,7 @@ class MainWindow(QMainWindow):
         spin.setRange(mn, mx)
         spin.setSingleStep(step)
         spin.setValue(value)
+        spin.valueChanged.connect(callback)
         return spin
 
     def sync_widgets_from_config(self):
@@ -1858,14 +1879,14 @@ class MainWindow(QMainWindow):
             f"<p>Generated: {datetime.now()}</p>",
             "<h2>Configuration</h2>",
             "<pre>",
-            json.dumps(asdict(config), indent=2),
+            html_mod.escape(json.dumps(asdict(config), indent=2)),
             "</pre>",
             "<h2>Latest Analysis</h2>",
             "<ul>",
         ]
 
         for key, value in self.last_analysis.items():
-            html.append(f"<li><b>{key}</b>: {value}</li>")
+            html.append(f"<li><b>{html_mod.escape(str(key))}</b>: {html_mod.escape(str(value))}</li>")
 
         html += [
             "</ul>",
