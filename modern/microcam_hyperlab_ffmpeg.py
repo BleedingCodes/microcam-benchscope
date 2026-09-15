@@ -17,10 +17,9 @@ Optional:
 pip install opencv-contrib-python
 
 Run:
-python3 microcam_benchscope_pro.py
+python3 modern/microcam_hyperlab_ffmpeg.py
 """
 
-import os
 import sys
 import html as html_mod
 import cv2
@@ -44,7 +43,7 @@ try:
 except Exception:
     TESSERACT_AVAILABLE = False
 
-from PySide6.QtCore import Qt, QTimer, QSize, Signal, QObject
+from PySide6.QtCore import Qt, QTimer, Signal, QObject
 from PySide6.QtGui import QImage, QPixmap, QAction, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
@@ -58,13 +57,9 @@ from PySide6.QtWidgets import (
     QComboBox,
     QCheckBox,
     QTextEdit,
-    QHBoxLayout,
     QVBoxLayout,
     QGridLayout,
-    QGroupBox,
     QTabWidget,
-    QMessageBox,
-    QFileDialog,
     QLineEdit,
     QSplitter,
     QSizePolicy,
