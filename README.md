@@ -146,7 +146,7 @@ These versions are:
 - educational references
 
 Included:
-- microcam_original.py
+- microcam.py
 - microcam_v2.py
 - microcam_v3.py
 - microcam_hyperlab.py
