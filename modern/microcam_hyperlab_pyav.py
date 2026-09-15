@@ -21,7 +21,7 @@ Optional:
 pip install opencv-contrib-python
 
 Run:
-python3 microcam_benchscope_pyav.py
+python3 modern/microcam_hyperlab_pyav.py
 """
 
 import sys
@@ -32,7 +32,6 @@ import time
 import math
 import glob
 import queue
-import shutil
 import threading
 import subprocess
 from dataclasses import dataclass, asdict
